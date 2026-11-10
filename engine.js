@@ -1,22 +1,22 @@
-// ===== 終末盤戯（アポカリプター） ルールエンジン =====
+// ===== 崩盤（コラプス） ルールエンジン =====
 const N = 17;
 const WHITE = 0, BLACK = 1;
 const TYPES = {
-  K: { name: '魔王',   ch: '魔', val: 0, boost: false },
-  A: { name: '天使',   ch: '天', val: 3, boost: false },
-  F: { name: '堕天使', ch: '堕', val: 3, boost: true },
-  I: { name: '審問官', ch: '審', val: 2, boost: true },
-  D: { name: '龍王',   ch: '龍', val: 4, boost: true },
-  S: { name: '星喰い', ch: '星', val: 4, boost: true },
-  R: { name: '死神',   ch: '死', val: 3, boost: true },
-  N: { name: '騎士',   ch: '騎', val: 2, boost: true },
-  P: { name: '信徒',   ch: '信', val: 1, boost: false },
+  K: { name: '覇王',   ch: '王', val: 0, boost: false },
+  A: { name: '光翼',   ch: '光', val: 3, boost: false },
+  F: { name: '影翼', ch: '影', val: 3, boost: true },
+  I: { name: '槍兵', ch: '槍', val: 2, boost: true },
+  D: { name: '蒼龍',   ch: '龍', val: 4, boost: true },
+  S: { name: '暴嵐', ch: '嵐', val: 4, boost: true },
+  R: { name: '死鎌',   ch: '鎌', val: 3, boost: true },
+  N: { name: '天馬',   ch: '馬', val: 2, boost: true },
+  P: { name: '兵卒',   ch: '信', val: 1, boost: false },
 };
 const P_FORMS = [
-  { name: '信徒', ch: '信' },
-  { name: '狂信者', ch: '狂' },
-  { name: '凶獣', ch: '凶' },
-  { name: '終末の獣', ch: '終' },
+  { name: '兵卒', ch: '兵' },
+  { name: '猛兵', ch: '猛' },
+  { name: '獣兵', ch: '獣' },
+  { name: '覇獣', ch: '覇' },
 ];
 const SAVIOR_POINTS = 20;
 const SAVIOR_TURNS = 3;
@@ -24,7 +24,7 @@ const BLACK_START_POINTS = 2;
 
 const idx = (r, c) => r * N + c;
 
-// 信徒の進化は、両陣営の救世主の降臨回数の合計で決まる（どちらが降臨しても両陣営が進化）
+// 兵卒の進化は、両陣営の覚醒の回数の合計で決まる（どちらが覚醒しても両陣営が進化）
 function totalSummons(state) { return state.summons[0] + state.summons[1]; }
 function pForm(state, side) { return Math.min(totalSummons(state), 3); }
 function pieceName(state, p) { return p.t === 'P' ? P_FORMS[pForm(state, p.s)].name : TYPES[p.t].name; }
@@ -52,9 +52,9 @@ function initialState() {
     turn: WHITE,
     pts: [0, BLACK_START_POINTS],
     summons: [0, 0],
-    active: [0, 0],      // 救世主の残り手番
-    shrink: 0,           // 縮退回数（外周から何周消えたか）
-    pLost: [0, 0],       // 狂信者以降に取られた信徒の数（2体ごとに縮退）
+    active: [0, 0],      // 覚醒の残り手番
+    shrink: 0,           // 崩落回数（外周から何周消えたか）
+    pLost: [0, 0],       // 猛兵以降に取られた兵卒の数（2体ごとに崩落）
     winner: null,        // 0 / 1 / 'draw'
     moveNo: 0,
     lastMove: null,
@@ -136,7 +136,7 @@ function pieceMoves(s, r, c) {
       for (const [dr, dc] of D8.slice(4)) for (let i = 1; i <= m; i++) jump(r + dr * i, c + dc * i);
       break;
     }
-    case 'N': { // L字、救世主中は縦3横1
+    case 'N': { // L字、覚醒中は縦3横1
       const a = boosted ? 3 : 2;
       for (const [dr, dc] of [[a, 1], [a, -1], [-a, 1], [-a, -1], [1, a], [-1, a], [1, -a], [-1, -a]]) jump(r + dr, c + dc);
       break;
@@ -172,7 +172,7 @@ function allMoves(s, side = s.turn) {
   return moves;
 }
 
-// 縮退：外周1周を消す
+// 崩落：外周1周を消す
 function doShrink(s, reason) {
   if (s.shrink >= (N - 1) / 2) return;
   s.shrink++;
@@ -221,7 +221,7 @@ function applyMove(state, from, to) {
     if (captured.t === 'P' && totalSummons(s) >= 1) s.pLost[captured.s]++;
   }
 
-  // 救世主の残り手番を消費
+  // 覚醒の残り手番を消費
   if (wasBoosted) {
     s.active[me]--;
     if (s.active[me] === 0) {
@@ -231,9 +231,9 @@ function applyMove(state, from, to) {
     }
   }
 
-  // 20ポイントで救世主降臨（自動）
+  // 20ポイントで覚醒（自動）
   if (s.pts[me] >= SAVIOR_POINTS) {
-    if (s.active[me] > 0) { // 発動中にもう一度降臨した場合、前の救世主は消える
+    if (s.active[me] > 0) { // 発動中にもう一度覚醒した場合、前の覚醒は終わる
       s.events.push({ type: 'saviorEnd', side: me });
       doShrink(s, 'savior');
       if (s.winner !== null) return s;
@@ -244,7 +244,7 @@ function applyMove(state, from, to) {
     s.events.push({ type: 'savior', side: me, count: s.summons[me], form: P_FORMS[pForm(s, me)].name });
   }
 
-  // 狂信者以降の信徒が2体取られるごとに縮退
+  // 猛兵以降の兵卒が2体取られるごとに崩落
   for (const side of [op, me]) {
     while (s.pLost[side] >= 2 && s.winner === null) {
       s.pLost[side] -= 2;
@@ -276,12 +276,12 @@ function evaluate(s, side) {
     const r = (i / N) | 0, c = i % N;
     let v;
     if (p.t === 'K') {
-      // 縮退で落ちそうな外周にいる魔王は危険
+      // 崩落で落ちそうな外周にいる覇王は危険
       const edge = Math.min(r - k, N - 1 - k - r, c - k, N - 1 - k - c);
       const danger = s.active[0] > 0 || s.active[1] > 0 || s.pLost[0] === 1 || s.pLost[1] === 1 || Math.max(...s.pts) >= 14;
       v = edge === 0 ? (danger ? -60 : -2) : (edge === 1 && danger ? -6 : 0);
       const home = p.s === WHITE ? (N - 1 - r) : r;
-      v -= home * 3 + Math.abs(c - 8) * 1.5; // 魔王はむやみに動かさない
+      v -= home * 3 + Math.abs(c - 8) * 1.5; // 覇王はむやみに動かさない
     } else {
       v = (TYPES[p.t].val + 1) * 10;
       if (p.t === 'P') {

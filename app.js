@@ -3,13 +3,13 @@
 //  アプリ設定（名前を変えるときはここだけ直せばよい）
 // ================================================================
 const APP = {
-  title: '終末盤戯',
-  ruby: 'APOCALYPTER',
-  tag: '魔王を詰ませ、盤が崩れ落ちる前に',
-  version: 'β 0.7',
+  title: '崩盤',
+  ruby: 'COLLAPSE',
+  tag: '覇王を討て、盤が崩れ落ちる前に',
+  version: 'β 0.8',
 };
 // 駒の画像を差し替えるとき：キーは「駒_陣営」。例 'K_w': 'assets/K_w.png'
-// 駒: K 魔王 / A 天使 / F 堕天使 / I 審問官 / D 龍王 / S 星喰い / R 死神 / N 騎士 / P 信徒 / P1 狂信者 / P2 凶獣 / P3 終末の獣
+// 駒: K 覇王 / A 光翼 / F 影翼 / I 槍兵 / D 蒼龍 / S 暴嵐 / R 死鎌 / N 天馬 / P 兵卒 / P1 猛兵 / P2 獣兵 / P3 覇獣
 // 陣営: w 白 / b 黒
 const PIECE_IMAGES = {};
 
@@ -129,8 +129,8 @@ const PIECE_IMAGES = {};
 
   // ---------------- 駒の描画 ----------------
   function kindOf(state, p) { if (p.t !== 'P') return p.t; const f = pForm(state, p.s); return f ? 'P' + f : 'P'; }
-  const KIND_CH = { K: '魔', A: '天', F: '堕', I: '審', D: '龍', S: '星', R: '死', N: '騎', P: '信', P1: '狂', P2: '凶', P3: '終' };
-  const KIND_NAME = { K: '魔王', A: '天使', F: '堕天使', I: '審問官', D: '龍王', S: '星喰い', R: '死神', N: '騎士', P: '信徒', P1: '狂信者', P2: '凶獣', P3: '終末の獣' };
+  const KIND_CH = { K: '王', A: '光', F: '影', I: '槍', D: '龍', S: '嵐', R: '鎌', N: '馬', P: '兵', P1: '猛', P2: '獣', P3: '覇' };
+  const KIND_NAME = { K: '覇王', A: '光翼', F: '影翼', I: '槍兵', D: '蒼龍', S: '暴嵐', R: '死鎌', N: '天馬', P: '兵卒', P1: '猛兵', P2: '獣兵', P3: '覇獣' };
   function pieceHTML(kind, side, cls = '') {
     const sc = side === WHITE ? 'w' : 'b';
     const img = PIECE_IMAGES[kind + '_' + sc];
@@ -153,18 +153,18 @@ const PIECE_IMAGES = {};
   //  遊び方
   // ================================================================
   const PIECE_INFO = {
-    K: { n: 1, v: '—', d: '8方向に1マス。取られたら負け。縮退で盤外に落ちても負け。' },
-    A: { n: 2, v: 3, d: '斜め4方向にどこまでも進める。救世主の強化は受けない。' },
-    F: { n: 1, v: 3, d: '8方向に最大4マス。救世主中は最大6マス。' },
-    I: { n: 2, v: 2, d: '縦横に最大6マス。救世主中は最大9マス。' },
-    D: { n: 1, v: 4, d: '自分を中心にした縦3列の範囲を、縦方向に最大4マス。救世主中は6マス。' },
-    S: { n: 2, v: 4, d: '自分を中心にした横3行の範囲を、横方向に最大4マス。救世主中は6マス。' },
-    R: { n: 2, v: 3, d: '斜め4方向に最大2マス。間の駒を飛び越えられる。救世主中は3マス。' },
-    N: { n: 2, v: 2, d: 'L字（縦2・横1）に跳ぶ。間の駒を飛び越えられる。救世主中は縦3・横1。' },
-    P: { n: 15, v: 1, d: '前に最大2マス進み、斜め前1マスの駒を取る。救世主の降臨で進化する。' },
-    P1: { n: '—', v: 2, d: 'どちらかの救世主が降臨すると進化（合計1回目）。前に最大2マス。正面1マスと斜め前1マスの駒を取れる。' },
-    P2: { n: '—', v: 2, d: '降臨の合計2回目で進化。前2・後ろ1・左右1マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
-    P3: { n: '—', v: 2, d: '降臨の合計3回目以降。前後2・左右2マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
+    K: { n: 1, v: '—', d: '8方向に1マス。取られたら負け。崩落で盤外に落ちても負け。' },
+    A: { n: 2, v: 3, d: '斜め4方向にどこまでも進める。覚醒の強化は受けない。' },
+    F: { n: 1, v: 3, d: '8方向に最大4マス。覚醒中は最大6マス。' },
+    I: { n: 2, v: 2, d: '縦横に最大6マス。覚醒中は最大9マス。' },
+    D: { n: 1, v: 4, d: '自分を中心にした縦3列の範囲を、縦方向に最大4マス。覚醒中は6マス。' },
+    S: { n: 2, v: 4, d: '自分を中心にした横3行の範囲を、横方向に最大4マス。覚醒中は6マス。' },
+    R: { n: 2, v: 3, d: '斜め4方向に最大2マス。間の駒を飛び越えられる。覚醒中は3マス。' },
+    N: { n: 2, v: 2, d: 'L字（縦2・横1）に跳ぶ。間の駒を飛び越えられる。覚醒中は縦3・横1。' },
+    P: { n: 15, v: 1, d: '前に最大2マス進み、斜め前1マスの駒を取る。覚醒で進化する。' },
+    P1: { n: '—', v: 2, d: 'どちらかの覚醒が発動すると進化（合計1回目）。前に最大2マス。正面1マスと斜め前1マスの駒を取れる。' },
+    P2: { n: '—', v: 2, d: '覚醒の合計2回目で進化。前2・後ろ1・左右1マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
+    P3: { n: '—', v: 2, d: '覚醒の合計3回目以降。前後2・左右2マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
   };
 
   function demoState(kind, boosted) {
@@ -219,46 +219,46 @@ const PIECE_IMAGES = {};
 
   const PAGES = [
     {
-      k: 'RULE I', h: '魔王を詰ませた方の勝ち', body: `
+      k: 'RULE I', h: '覇王を詰ませた方の勝ち', body: `
       <p>17×17の盤で、白と黒が1手ずつ交互に駒を動かします。将棋やチェスと同じく、動かした先に相手の駒があれば取れます。</p>
       <div class="card"><ul>
-        <li>相手の<b>魔王</b>を取れば勝ち。</li>
-        <li><b>縮退</b>で魔王が盤の外に落ちても負け。両方同時に落ちたら引き分け。</li>
+        <li>相手の<b>覇王</b>を取れば勝ち。</li>
+        <li><b>崩落</b>で覇王が盤の外に落ちても負け。両方同時に落ちたら引き分け。</li>
         <li>動かせる駒がなくなった側も負け。</li>
       </ul></div>` },
     {
       k: 'RULE II', h: '盤と初期配置', body: `
-      <p>手前が白（先手）、奥が黒（後手）。魔王は最後列の中央にいます。</p>
+      <p>手前が白（先手）、奥が黒（後手）。覇王は最後列の中央にいます。</p>
       <div class="demo-board" id="demo-setup"></div>
       <p class="note">先手の白が少し有利なので、後手の黒は最初から魂ポイントを2持っています。</p>` },
     {
       k: 'RULE III', h: '駒の動き', body: `
       <div class="piece-pick" id="pick"></div>
       <div class="demo"><div class="demo-info" id="demo-info"></div><div class="demo-board" id="demo-board"></div>
-      <div class="legend"><span class="l1">移動できる</span><span class="l2">救世主中に増える</span><span class="l3">駒を取れる</span></div>
-      <div class="row" style="padding:10px 14px"><span class="lbl"><b>救世主中の動きを見る</b></span><button class="toggle" id="demo-boost" type="button" aria-label="救世主中の動き"></button></div></div>` },
+      <div class="legend"><span class="l1">移動できる</span><span class="l2">覚醒中に増える</span><span class="l3">駒を取れる</span></div>
+      <div class="row" style="padding:10px 14px"><span class="lbl"><b>覚醒中の動きを見る</b></span><button class="toggle" id="demo-boost" type="button" aria-label="覚醒中の動き"></button></div></div>` },
     {
       k: 'RULE IV', h: '魂ポイント', body: `
       <p>相手の駒を取るたびに、駒ごとの魂ポイントが手に入ります。</p>
       <div class="card"><table class="pts-table"><tbody>
-        <tr><td>龍王・星喰い</td><td>4</td></tr>
-        <tr><td>天使・堕天使・死神</td><td>3</td></tr>
-        <tr><td>審問官・騎士</td><td>2</td></tr>
-        <tr><td>信徒</td><td>1</td></tr>
-        <tr><td>狂信者以降に進化した信徒</td><td>2</td></tr>
-        <tr><td>魔王（取った時点で勝ち）</td><td>—</td></tr>
+        <tr><td>蒼龍・暴嵐</td><td>4</td></tr>
+        <tr><td>光翼・影翼・死鎌</td><td>3</td></tr>
+        <tr><td>槍兵・天馬</td><td>2</td></tr>
+        <tr><td>兵卒</td><td>1</td></tr>
+        <tr><td>猛兵以降に進化した兵卒</td><td>2</td></tr>
+        <tr><td>覇王（取った時点で勝ち）</td><td>—</td></tr>
       </tbody></table></div>` },
     {
-      k: 'RULE V', h: '20ポイントで救世主降臨', body: `
+      k: 'RULE V', h: '20ポイントで覚醒', body: `
       <div class="card"><ul>
-        <li>魂ポイントが20に達すると、その手で自動的に救世主が降臨します。ポイントは0に戻ります。</li>
-        <li>降臨した側の<b>堕天使・審問官・龍王・星喰い・死神・騎士</b>の移動距離が1.5倍になります。</li>
-        <li>効果は降臨した側の手番3回分。魔王・天使・信徒は強化されません。</li>
-        <li>相手の救世主がいる間でも、自分の救世主は降臨します。</li>
+        <li>魂ポイントが20に達すると、その手で自動的に覚醒が発動します。ポイントは0に戻ります。</li>
+        <li>覚醒した側の<b>影翼・槍兵・蒼龍・暴嵐・死鎌・天馬</b>の移動距離が1.5倍になります。</li>
+        <li>効果は覚醒した側の手番3回分。覇王・光翼・兵卒は強化されません。</li>
+        <li>相手が覚醒している間でも、自分も覚醒します。</li>
       </ul></div>` },
     {
-      k: 'RULE VI', h: '縮退 — 盤が崩れる', body: `
-      <svg class="shrink-fig" viewBox="0 0 360 120" aria-label="縮退で盤が小さくなる図">
+      k: 'RULE VI', h: '崩落 — 盤が崩れる', body: `
+      <svg class="shrink-fig" viewBox="0 0 360 120" aria-label="崩落で盤が小さくなる図">
         ${[0, 1, 2, 3].map(i => {
           const x = 10 + i * 88, s = 76, k = i * 4.5;
           return `<rect x="${x}" y="10" width="${s}" height="${s}" fill="#0f1b31" stroke="#8a6b3a" stroke-width="1"/>` +
@@ -267,13 +267,13 @@ const PIECE_IMAGES = {};
         }).join('')}
       </svg>
       <div class="card"><ul>
-        <li>救世主が消えた次の瞬間、盤の外周1周が消えます。</li>
-        <li>狂信者以降の信徒が、どちらかの陣営で2体取られるたびにも縮退します（縮退で落ちた分は数えません）。</li>
-        <li>消えたマスにいた駒は消滅。<b>魔王でも即死</b>です。</li>
+        <li>覚醒が終わった次の瞬間、盤の外周1周が消えます。</li>
+        <li>猛兵以降の兵卒が、どちらかの陣営で2体取られるたびにも崩落します（崩落で落ちた分は数えません）。</li>
+        <li>消えたマスにいた駒は消滅。<b>覇王でも即死</b>です。</li>
       </ul></div>` },
     {
-      k: 'RULE VII', h: '信徒の進化', body: `
-      <p>白と黒のどちらの救世主が降臨しても、<b>両陣営の信徒すべて</b>が進化します。段階は、両陣営の降臨回数の合計で決まります。</p>
+      k: 'RULE VII', h: '兵卒の進化', body: `
+      <p>白と黒のどちらの覚醒が発動しても、<b>両陣営の兵卒すべて</b>が進化します。段階は、両陣営の覚醒回数の合計で決まります。</p>
       <div class="forms" id="forms"></div>
       <div class="demo"><div class="demo-info" id="form-info"></div><div class="demo-board" id="form-board"></div>
       <div class="legend"><span class="l1">移動できる（駒があれば取れる）</span><span class="l3">取るときだけ行ける</span></div></div>
@@ -287,7 +287,7 @@ const PIECE_IMAGES = {};
     $('pick').innerHTML = ['K', 'A', 'F', 'I', 'D', 'S', 'R', 'N', 'P'].map(k => `<button type="button" data-k="${k}">${pieceHTML(k, WHITE)}<span>${KIND_NAME[k]}</span></button>`).join('');
     $('pick').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; Sfx.tap(); demoKind = b.dataset.k; drawDemo(); });
     $('demo-boost').addEventListener('click', () => { demoBoost = !demoBoost; Sfx.tap(); drawDemo(); });
-    $('forms').innerHTML = ['P', 'P1', 'P2', 'P3'].map((k, i) => `<button type="button" data-k="${k}">${pieceHTML(k, WHITE)}<span>${KIND_NAME[k]}<br><small style="color:var(--muted)">${i === 0 ? '降臨前' : i === 3 ? '合計3回〜' : '合計' + i + '回'}</small></span></button>`).join('');
+    $('forms').innerHTML = ['P', 'P1', 'P2', 'P3'].map((k, i) => `<button type="button" data-k="${k}">${pieceHTML(k, WHITE)}<span>${KIND_NAME[k]}<br><small style="color:var(--muted)">${i === 0 ? '覚醒前' : i === 3 ? '合計3回〜' : '合計' + i + '回'}</small></span></button>`).join('');
     $('forms').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; Sfx.tap(); formKind = b.dataset.k; drawForm(); });
     $('rules-tut').onclick = () => { Sfx.select(); startTutorial(0); };
     drawDemo(); drawForm(); goPage(0);
@@ -574,15 +574,15 @@ const PIECE_IMAGES = {};
     render(); setTimeout(showResult, 900);
   }
 
-  // 救世主の残り手番を盤の上に大きく出す
+  // 覚醒の残り手番を盤の上に大きく出す
   function renderRibbons() {
     const el = $('sv-ribbons');
     const sides = [WHITE, BLACK].filter(s => G.active[s] > 0 && G.winner === null);
     const html = sides.map(s => {
       const n = G.active[s], last = n === 1;
       const pips = [0, 1, 2].map(k => `<i class="${k < n ? 'on' : ''}"></i>`).join('');
-      return `<span class="sv-rib ${s === WHITE ? 'w' : 'b'}${last ? ' last' : ''}"><span class="lbl">${SIDE[s]}<span class="lng">の救世主</span></span><span class="pips">${pips}</span>` +
-        `<span class="n">${n}</span><span class="u">手${last ? `<span class="lng">・${SIDE[s]}が次に指すと縮退</span>` : ''}</span></span>`;
+      return `<span class="sv-rib ${s === WHITE ? 'w' : 'b'}${last ? ' last' : ''}"><span class="lbl">${SIDE[s]}<span class="lng">の覚醒</span></span><span class="pips">${pips}</span>` +
+        `<span class="n">${n}</span><span class="u">手${last ? `<span class="lng">・${SIDE[s]}が次に指すと崩落</span>` : ''}</span></span>`;
     }).join('');
     el.classList.toggle('two', sides.length === 2);
     if (el.dataset.html !== html) { el.innerHTML = html; el.dataset.html = html; }
@@ -611,10 +611,10 @@ const PIECE_IMAGES = {};
     const who = cfg.mode === 'tut' ? (s === WHITE ? 'あなた' : '練習相手') : cfg.mode === 'cpu' ? (s === cfg.human ? 'あなた' : `CPU（${LV[cfg.level]}）`) : `プレイヤー${s + 1}`;
     let cnt = 0; for (const p of G.board) if (p && p.s === s) cnt++;
     const tags = [];
-    tags.push(`<span class="tag form">信徒：${P_FORMS[pForm(G, s)].name}</span>`);
+    tags.push(`<span class="tag form">兵卒：${P_FORMS[pForm(G, s)].name}</span>`);
     
-    if (G.summons[s] > 0) tags.push(`<span class="tag">降臨 ${G.summons[s]}回</span>`);
-    if (totalSummons(G) >= 1) tags.push(`<span class="tag ${G.pLost[s] === 1 ? 'warn' : ''}">信徒の損失 ${G.pLost[s]}/2</span>`);
+    if (G.summons[s] > 0) tags.push(`<span class="tag">覚醒 ${G.summons[s]}回</span>`);
+    if (totalSummons(G) >= 1) tags.push(`<span class="tag ${G.pLost[s] === 1 ? 'warn' : ''}">兵卒の損失 ${G.pLost[s]}/2</span>`);
     tags.push(`<span class="tag">駒 ${cnt}</span>`);
     el.className = `player ${sc}${G.turn === s && G.winner === null ? ' active' : ''}`;
     el.innerHTML = `<span class="medal">${pieceHTML('K', s)}</span>
@@ -643,20 +643,20 @@ const PIECE_IMAGES = {};
       return;
     }
     if (settings.assist && mine) {
-      if (assist.kingAttacked) { h.classList.add('warn'); h.innerHTML = '<b>魔王が狙われています</b>。逃げるか、狙っている駒を取ろう'; return; }
-      if (assist.kingOnRing && assist.shrinkSoon) { h.classList.add('warn'); h.innerHTML = '<b>縮退が近い</b>。外周にいる魔王を内側へ逃がそう'; return; }
+      if (assist.kingAttacked) { h.classList.add('warn'); h.innerHTML = '<b>覇王が狙われています</b>。逃げるか、狙っている駒を取ろう'; return; }
+      if (assist.kingOnRing && assist.shrinkSoon) { h.classList.add('warn'); h.innerHTML = '<b>崩落が近い</b>。外周にいる覇王を内側へ逃がそう'; return; }
       if (assist.threatened.size) { h.innerHTML = `赤く脈打つ駒（${assist.threatened.size}体）が狙われています`; return; }
-      if (assist.kingOnRing && cfg.mode !== 'tut') { h.textContent = '魔王は外周にいます。縮退が起きる前に内側へ動かしておこう'; return; }
+      if (assist.kingOnRing && cfg.mode !== 'tut') { h.textContent = '覇王は外周にいます。崩落が起きる前に内側へ動かしておこう'; return; }
     }
     const doom = G.active[0] > 0 || G.active[1] > 0;
-    h.textContent = doom ? '赤く光る外周は、救世主が消えると崩れ落ちます' : '動かす駒をタップ';
+    h.textContent = doom ? '赤く光る外周は、覚醒が終わると崩れ落ちます' : '動かす駒をタップ';
   }
 
   // ---------------- 補助表示 ----------------
   const MOVE_SHORT = {
-    K: '8方向に1マス', A: '斜めにどこまでも', F: '8方向に最大4マス（救世主中6）', I: '縦横に最大6マス（救世主中9）',
-    D: '縦3列の範囲を縦に最大4マス（救世主中6）', S: '横3行の範囲を横に最大4マス（救世主中6）',
-    R: '斜めに最大2マス・飛び越え可（救世主中3）', N: 'L字に跳ぶ・飛び越え可（救世主中は縦3横1）',
+    K: '8方向に1マス', A: '斜めにどこまでも', F: '8方向に最大4マス（覚醒中6）', I: '縦横に最大6マス（覚醒中9）',
+    D: '縦3列の範囲を縦に最大4マス（覚醒中6）', S: '横3行の範囲を横に最大4マス（覚醒中6）',
+    R: '斜めに最大2マス・飛び越え可（覚醒中3）', N: 'L字に跳ぶ・飛び越え可（覚醒中は縦3横1）',
     P: '前に最大2マス・斜め前の駒を取る', P1: '前に最大2マス・正面と斜め前の駒を取る',
     P2: '前2・後1・左右1マス、斜め前の駒も取る', P3: '前後左右2マス、斜め前の駒も取る',
   };
@@ -763,7 +763,7 @@ const PIECE_IMAGES = {};
     const sc = side === WHITE ? 'w' : 'b';
     el.style.setProperty('--rc', side === WHITE ? '#79d4ff' : '#ff6b5c');
     $('sv-sub').textContent = `${SIDE[side]}陣営${ev.count > 1 ? `・${ev.count}回目` : ''}`;
-    if (reduceMotion) { toast(`${SIDE[side]}の救世主降臨`, `3手の間、移動距離1.5倍`); return; }
+    if (reduceMotion) { toast(`${SIDE[side]}の覚醒`, `3手の間、移動距離1.5倍`); return; }
     // 何が変わったかのカード
     const cards = [];
     const boosted = ['F', 'I', 'D', 'S', 'R', 'N'].map(k => `<span class="svc-pc">${pieceHTML(k, side, 'boost')}</span>`).join('');
@@ -774,7 +774,7 @@ const PIECE_IMAGES = {};
       const x = xs[0], f0 = pForm(prev, x), f1 = pForm(s, x);
       const k0 = f0 ? 'P' + f0 : 'P', k1 = 'P' + f1;
       const medal = (k, t) => xs.map(y => `<span class="svc-pc">${pieceHTML(k, y, t)}</span>`).join('');
-      cards.push(`<div class="svc ${xs.length === 2 ? 'both' : x === WHITE ? 'w' : 'b'}"><em>${label}の信徒 進化</em>` +
+      cards.push(`<div class="svc ${xs.length === 2 ? 'both' : x === WHITE ? 'w' : 'b'}"><em>${label}の兵卒 進化</em>` +
         `<div class="evo"><span class="evo-side">${medal(k0, '')}<small>${KIND_NAME[k0]}</small></span><span class="arrow">→</span><span class="evo-side">${medal(k1, 'boost')}<small>${KIND_NAME[k1]}</small></span></div>` +
         `<small class="svc-note">${MOVE_SHORT[k1]}${f0 === 0 ? '・取られたときの魂は2' : ''}</small></div>`);
     }
@@ -806,13 +806,13 @@ const PIECE_IMAGES = {};
     const sv = evs.find(e => e.type === 'savior');
     const shr = evs.filter(e => e.type === 'shrink');
     if (shr.length) {
-      // 縮退前の配置（移動後）を作って崩れ落ちる駒を描く
+      // 崩落前の配置（移動後）を作って崩れ落ちる駒を描く
       const pb = prev.board.slice(); pb[to] = pb[from]; pb[from] = null;
       setTimeout(() => {
         Sfx.shrink();
         shrinkAnim(pb, prev.shrink, s.shrink);
         const fallen = shr.reduce((a, e) => a + e.fallen, 0);
-        toast('縮退', `盤は${N - s.shrink * 2}×${N - s.shrink * 2}に${fallen ? `・${fallen}体が落下` : ''}`, 'sh');
+        toast('崩落', `盤は${N - s.shrink * 2}×${N - s.shrink * 2}に${fallen ? `・${fallen}体が落下` : ''}`, 'sh');
       }, 250);
       wait = Math.max(wait, 1100);
     }
@@ -838,11 +838,11 @@ const PIECE_IMAGES = {};
     for (const ev of s.events) {
       if (ev.type === 'move') logItems.push({ n: s.moveNo, t: `${SIDE[ev.side]} ${ev.piece} ${sq(ev.from)}→${sq(ev.to)}${ev.capture ? ` ×${ev.capture}` : ''}` });
       else if (ev.type === 'points') logItems.push({ c: 'pt', t: `魂 +${ev.gain}（${ev.total}）` });
-      else if (ev.type === 'savior') logItems.push({ c: 'sv', t: `${SIDE[ev.side]}の救世主が降臨（${ev.count}回目）・信徒は${ev.form}へ` });
-      else if (ev.type === 'saviorEnd') logItems.push({ c: 'sv', t: `${SIDE[ev.side]}の救世主が消滅` });
-      else if (ev.type === 'shrink') logItems.push({ c: 'sh', t: `縮退・外周が消滅${ev.fallen ? `（${ev.fallen}体が落下）` : ''}${ev.reason === 'pawns' ? '・信徒の損失による' : ''}` });
-      else if (ev.type === 'kingCaptured') logItems.push({ c: 'pt', t: `魔王を詰ませた・${SIDE[ev.winner]}の勝ち` });
-      else if (ev.type === 'kingFall') logItems.push({ c: 'sh', t: ev.winner === 'draw' ? '両方の魔王が落下・引き分け' : `魔王が落下・${SIDE[ev.winner]}の勝ち` });
+      else if (ev.type === 'savior') logItems.push({ c: 'sv', t: `${SIDE[ev.side]}が覚醒（${ev.count}回目）・兵卒は${ev.form}へ` });
+      else if (ev.type === 'saviorEnd') logItems.push({ c: 'sv', t: `${SIDE[ev.side]}の覚醒が終了` });
+      else if (ev.type === 'shrink') logItems.push({ c: 'sh', t: `崩落・外周が消滅${ev.fallen ? `（${ev.fallen}体が落下）` : ''}${ev.reason === 'pawns' ? '・兵卒の損失による' : ''}` });
+      else if (ev.type === 'kingCaptured') logItems.push({ c: 'pt', t: `覇王を詰ませた・${SIDE[ev.winner]}の勝ち` });
+      else if (ev.type === 'kingFall') logItems.push({ c: 'sh', t: ev.winner === 'draw' ? '両方の覇王が落下・引き分け' : `覇王が落下・${SIDE[ev.winner]}の勝ち` });
       else if (ev.type === 'noMoves') logItems.push({ c: 'pt', t: `動かせる駒がない・${SIDE[ev.winner]}の勝ち` });
     }
   }
@@ -861,7 +861,7 @@ const PIECE_IMAGES = {};
     store.del('save');
     const w = G.winner;
     const ev = G.events.find(e => ['kingCaptured', 'kingFall', 'noMoves'].includes(e.type));
-    const why = endReason === 'resign' ? '投了' : endReason === 'timeout' ? '時間切れ' : !ev ? '' : ev.type === 'kingFall' ? '縮退で魔王が盤外へ落下' : ev.type === 'noMoves' ? '動かせる駒がなくなった' : '魔王を詰ませた';
+    const why = endReason === 'resign' ? '投了' : endReason === 'timeout' ? '時間切れ' : !ev ? '' : ev.type === 'kingFall' ? '崩落で覇王が盤外へ落下' : ev.type === 'noMoves' ? '動かせる駒がなくなった' : '覇王を詰ませた';
     endReason = null;
     let big, lose = false;
     if (w === 'draw') big = '引き分け';
@@ -873,8 +873,8 @@ const PIECE_IMAGES = {};
     $('r-stats').innerHTML = `<span class="h"></span><span class="h">白</span><span class="h">黒</span>
       <span>取った駒</span><span class="v">${stats.caps[0]}</span><span class="v">${stats.caps[1]}</span>
       <span>獲得した魂</span><span class="v">${stats.soul[0]}</span><span class="v">${stats.soul[1]}</span>
-      <span>救世主の降臨</span><span class="v">${G.summons[0]}</span><span class="v">${G.summons[1]}</span>
-      <span>縮退</span><span class="v" style="grid-column:2/4;text-align:center">${G.shrink}回</span>`;
+      <span>覚醒</span><span class="v">${G.summons[0]}</span><span class="v">${G.summons[1]}</span>
+      <span>崩落</span><span class="v" style="grid-column:2/4;text-align:center">${G.shrink}回</span>`;
     if (lose) Sfx.lose(); else Sfx.win();
     $('ov-result').classList.add('on');
     render();
@@ -929,32 +929,32 @@ const PIECE_IMAGES = {};
   }
   const KINGS = [[16, 8, 'K', WHITE], [3, 8, 'K', BLACK]];
   const LESSONS = [
-    { h: '駒を動かす', p: '騎士はL字に跳ぶ駒です。<b>白の騎士</b>をタップして、光ったマスのどれかへ動かしてみよう。',
+    { h: '駒を動かす', p: '天馬はL字に跳ぶ駒です。<b>白の天馬</b>をタップして、光ったマスのどれかへ動かしてみよう。',
       ok: '駒を選ぶと、動けるマスが光ります。駒ごとに動きが違うので、迷ったら「ルール早見表」を見よう。',
       setup: () => mk([...KINGS, [12, 8, 'N', WHITE], [13, 3, 'P', WHITE], [13, 13, 'P', WHITE]]),
       goal: (s, prev) => { const e = s.events.find(e => e.type === 'move'); return e && prev.board[e.from].t === 'N'; },
-      fail: '動かすのは騎士です。' },
-    { h: '駒を取る', p: '動かした先に相手の駒があれば取れます。審問官は縦横に最大6マス。<b>真上の黒の龍王</b>を取ろう。',
-      ok: '駒を取ると魂ポイントが入ります。龍王は4点。強い駒ほど点が高い。',
+      fail: '動かすのは天馬です。' },
+    { h: '駒を取る', p: '動かした先に相手の駒があれば取れます。槍兵は縦横に最大6マス。<b>真上の黒の蒼龍</b>を取ろう。',
+      ok: '駒を取ると魂ポイントが入ります。蒼龍は4点。強い駒ほど点が高い。',
       setup: () => mk([...KINGS, [14, 4, 'I', WHITE], [9, 4, 'D', BLACK], [8, 12, 'P', BLACK]]),
-      goal: s => !!s.events.find(e => e.type === 'move' && e.capture === '龍王'),
-      fail: '審問官で、まっすぐ上にいる龍王を取ろう。' },
-    { h: '魔王を詰ませる', p: '相手の<b>魔王</b>を取れば勝ち。天使は斜めにどこまでも進めます。<b>白の天使</b>で黒の魔王を取ろう。',
-      ok: '魔王を取った瞬間に勝ちです。逆に、自分の魔王が狙われたら必ず逃がそう。',
+      goal: s => !!s.events.find(e => e.type === 'move' && e.capture === '蒼龍'),
+      fail: '槍兵で、まっすぐ上にいる蒼龍を取ろう。' },
+    { h: '覇王を詰ませる', p: '相手の<b>覇王</b>を取れば勝ち。光翼は斜めにどこまでも進めます。<b>白の光翼</b>で黒の覇王を取ろう。',
+      ok: '覇王を取った瞬間に勝ちです。逆に、自分の覇王が狙われたら必ず逃がそう。',
       setup: () => mk([[16, 8, 'K', WHITE], [6, 10, 'K', BLACK], [14, 2, 'A', WHITE], [5, 4, 'P', BLACK], [5, 12, 'P', BLACK]]),
       goal: s => s.winner === WHITE,
-      fail: '天使を右上の斜めへ進めると、黒の魔王に届きます。' },
-    { h: '縮退から逃げる', p: '白の救世主はあと1手で消え、その瞬間に<b>盤の外周が崩れます</b>。外周にいる白の魔王を、1マス内側へ逃がそう。',
-      ok: '外周にいた黒の信徒は落ちて消えました。魔王が落ちたら負けなので、縮退が近いときは魔王の位置に気をつけよう。',
+      fail: '光翼を右上の斜めへ進めると、黒の覇王に届きます。' },
+    { h: '崩落から逃げる', p: '白の覚醒はあと1手で終わり、その瞬間に<b>盤の外周が崩れます</b>。外周にいる白の覇王を、1マス内側へ逃がそう。',
+      ok: '外周にいた黒の兵卒は落ちて消えました。覇王が落ちたら負けなので、崩落が近いときは覇王の位置に気をつけよう。',
       setup: () => mk([[16, 8, 'K', WHITE], [8, 8, 'K', BLACK], [13, 4, 'P', WHITE], [13, 12, 'P', WHITE], [0, 3, 'P', BLACK], [0, 13, 'P', BLACK], [6, 0, 'S', BLACK]],
         { active: [1, 0], summons: [1, 0], pts: [6, 0] }),
       goal: s => s.winner === null,
-      fail: '魔王が外周に残ったまま縮退が起き、落ちてしまいました。魔王を上へ動かそう。' },
-    { h: '救世主を呼ぶ', p: '魂ポイントが<b>20</b>になると救世主が降臨します。いま19点。<b>騎士</b>で黒の信徒を取って、あと1点を稼ごう。',
-      ok: '降臨中の3手は、強い駒の移動距離が1.5倍。両陣営の信徒も進化します。ただし救世主が消えると縮退が起きるので注意。',
+      fail: '覇王が外周に残ったまま崩落が起き、落ちてしまいました。覇王を上へ動かそう。' },
+    { h: '覚醒する', p: '魂ポイントが<b>20</b>になると覚醒が発動します。いま19点。<b>天馬</b>で黒の兵卒を取って、あと1点を稼ごう。',
+      ok: '覚醒中の3手は、強い駒の移動距離が1.5倍。両陣営の兵卒も進化します。ただし覚醒が終わると崩落が起きるので注意。',
       setup: () => mk([...KINGS, [12, 6, 'N', WHITE], [10, 7, 'P', BLACK], [14, 10, 'I', WHITE], [10, 12, 'P', BLACK]], { pts: [19, 2] }),
       goal: s => !!s.events.find(e => e.type === 'savior'),
-      fail: '騎士のL字の先にいる信徒を取ろう。' },
+      fail: '天馬のL字の先にいる兵卒を取ろう。' },
   ];
   const tut = { i: 0, done: false };
   function tutHide() { $('tut').hidden = true; $('p-top').hidden = false; }
@@ -1009,14 +1009,14 @@ const PIECE_IMAGES = {};
     const rows = ['K', 'A', 'F', 'I', 'D', 'S', 'R', 'N', 'P'].map(k =>
       `<li><span class="rm">${pieceHTML(k, WHITE)}</span><span><b>${KIND_NAME[k]}</b><small>${MOVE_SHORT[k]}</small></span><span class="rv">${PIECE_INFO[k].v}</span></li>`).join('');
     const forms = ['P1', 'P2', 'P3'].map((k, i) =>
-      `<li><span class="rm">${pieceHTML(k, WHITE)}</span><span><b>${KIND_NAME[k]}</b><small>降臨 合計${i + 1}回${i === 2 ? '以上' : ''}・${MOVE_SHORT[k]}</small></span><span class="rv">2</span></li>`).join('');
-    // (降臨回数は両陣営の合計)
+      `<li><span class="rm">${pieceHTML(k, WHITE)}</span><span><b>${KIND_NAME[k]}</b><small>覚醒 合計${i + 1}回${i === 2 ? '以上' : ''}・${MOVE_SHORT[k]}</small></span><span class="rv">2</span></li>`).join('');
+    // (覚醒回数は両陣営の合計)
     $('ref-body').innerHTML = `
-      <section><h4>勝ち方</h4><p>相手の魔王を取る。縮退で相手の魔王が盤外に落ちても勝ち。</p></section>
+      <section><h4>勝ち方</h4><p>相手の覇王を取る。崩落で相手の覇王が盤外に落ちても勝ち。</p></section>
       <section><h4>駒の動き<span>魂</span></h4><ul class="ref-list">${rows}</ul></section>
-      <section><h4>救世主</h4><p>魂ポイント20で自動降臨し、ポイントは0に。降臨した側の手番3回、堕天使・審問官・龍王・星喰い・死神・騎士の移動距離が1.5倍。</p></section>
-      <section><h4>縮退</h4><p>救世主が消えたとき、または進化後の信徒がどちらかの陣営で2体取られるたびに、外周1周が消える。上の駒は消滅し、魔王なら負け。</p></section>
-      <section><h4>信徒の進化（どちらの降臨でも両陣営）<span>魂</span></h4><ul class="ref-list">${forms}</ul></section>
+      <section><h4>覚醒</h4><p>魂ポイント20で自動で覚醒し、ポイントは0に。覚醒した側の手番3回、影翼・槍兵・蒼龍・暴嵐・死鎌・天馬の移動距離が1.5倍。</p></section>
+      <section><h4>崩落</h4><p>覚醒が終わったとき、または進化後の兵卒がどちらかの陣営で2体取られるたびに、外周1周が消える。上の駒は消滅し、覇王なら負け。</p></section>
+      <section><h4>兵卒の進化（どちらの覚醒でも両陣営）<span>魂</span></h4><ul class="ref-list">${forms}</ul></section>
       <section><h4>先手と後手</h4><p>白が先手。黒は魂ポイント2から始まる。</p></section>`;
   }
   $('btn-ref').onclick = () => { Sfx.tap(); $('ov-ref').classList.add('on'); };
@@ -1030,7 +1030,7 @@ const PIECE_IMAGES = {};
   // ---------------- 初期化 ----------------
   $('t-title').textContent = APP.title; $('t-ruby').textContent = APP.ruby; $('t-tag').textContent = APP.tag;
   $('m-title').textContent = APP.title; $('m-ruby').textContent = APP.ruby;
-  $('t-ver').textContent = `${APP.version} ・ 原作：江藤俊司・疾狼『神血の救世主』作中ゲームの再現`;
+  $('t-ver').textContent = APP.version;
   document.title = APP.title;
   buildRules(); buildRef(); drawSettings(); drawSetup();
   $('tut-badge').hidden = !!store.get('tutDone', false);
