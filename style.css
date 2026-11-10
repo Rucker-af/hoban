@@ -276,9 +276,16 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold);
 .pc-wrap { container-type: inline-size; }
 .pc.w .kj { color: #10213d; text-shadow: 0 0 2px rgba(255,255,255,.7); }
 .pc.b .kj { color: #f3d48a; text-shadow: 0 0 3px rgba(0,0,0,.9); }
-.mode-kanji .pc .emb { display: none; }
-.mode-both .pc .emb { opacity: .32; }
-.mode-icon .pc .kj { display: none; }
+.pc:not(.img) .emb { opacity: .32; }
+.mode-icon .pc:not(.img) .kj { display: none; }
+.mode-icon .pc:not(.img) .emb { opacity: 1; }
+/* 絵の駒 */
+.pc.img .kj { display: none; border-radius: 50%; font-size: 44cqw; }
+.mode-kanji .pc.img .kj, .mode-auto .board.tiny .pc.img .kj { display: grid; background: radial-gradient(circle, rgba(4,8,18,.72) 0 30%, rgba(4,8,18,0) 42%); }
+.pc.img.w .kj { color: #fff; text-shadow: 0 0 2px #0b2a5a, 0 0 4px #1d5fae; }
+.pc.img.b .kj { color: #ffe3a3; text-shadow: 0 0 2px #2a0b05, 0 0 4px #9a2a1a; }
+.pc.img img { filter: drop-shadow(0 1px 1px rgba(0,0,0,.7)); -webkit-user-drag: none; user-select: none; }
+.pc.img.king::after { inset: -2%; }
 .pc.w { --au: 121, 212, 255; }
 .pc.b { --au: 255, 107, 92; }
 /* 救世主で強化中の駒：回る光輪＋立ちのぼる光 */

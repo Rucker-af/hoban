@@ -167,8 +167,8 @@
     <div class="bar"><button class="icon-btn back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24"><path d="M15 5 L8 12 L15 19" fill="none" stroke="#d9b56c" stroke-width="2"/></svg></button><h2>設定</h2></div>
     <div class="row"><span class="lbl"><b>補助表示</b><small>狙われている駒、危ないマス、覇王の危機を知らせる</small></span><button class="toggle" id="set-assist" type="button" aria-label="補助表示"></button></div>
     <div class="row"><span class="lbl"><b>効果音</b><small>駒の移動・捕獲・覚醒の音</small></span><button class="toggle" id="set-sound" type="button" aria-label="効果音"></button></div>
-    <div class="row"><span class="lbl"><b>駒の表示</b><small>小さい画面では「文字」が見やすい</small></span>
-      <span class="seg" id="set-piece"><button type="button" data-v="both">紋章＋文字</button><button type="button" data-v="kanji">文字</button><button type="button" data-v="icon">紋章</button></span></div>
+    <div class="row"><span class="lbl"><b>駒の表示</b><small>「自動」は、盤が小さいときだけ絵に文字を重ねる</small></span>
+      <span class="seg" id="set-piece"><button type="button" data-v="auto">自動</button><button type="button" data-v="icon">絵だけ</button><button type="button" data-v="kanji">文字を重ねる</button></span></div>
     <div class="row"><span class="lbl"><b>移動できるマスを表示</b><small>駒を選んだときに光らせる</small></span><button class="toggle" id="set-targets" type="button" aria-label="移動できるマスを表示"></button></div>
     <div class="row"><span class="lbl"><b>演出</b><small>覚醒や崩落のアニメーション</small></span>
       <span class="seg" id="set-fx"><button type="button" data-v="full">通常</button><button type="button" data-v="calm">控えめ</button></span></div>
@@ -265,6 +265,7 @@
 <div id="fx-savior" aria-hidden="true"><div class="rays"></div><div class="core"></div><div class="sv-stack"><div class="txt"><em>AWAKENING</em><b>覚醒</b><span id="sv-sub"></span></div><div class="sv-cards" id="sv-cards"></div></div><span class="sv-skip">タップで閉じる</span></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
+<script>window.PIECE_IMAGES = {"A_b": "assets/A_b.webp", "A_w": "assets/A_w.webp", "D_b": "assets/D_b.webp", "D_w": "assets/D_w.webp", "F_b": "assets/F_b.webp", "F_w": "assets/F_w.webp", "I_b": "assets/I_b.webp", "I_w": "assets/I_w.webp", "K_b": "assets/K_b.webp", "K_w": "assets/K_w.webp", "N_b": "assets/N_b.webp", "N_w": "assets/N_w.webp", "P1_b": "assets/P1_b.webp", "P1_w": "assets/P1_w.webp", "P2_b": "assets/P2_b.webp", "P2_w": "assets/P2_w.webp", "P3_b": "assets/P3_b.webp", "P3_w": "assets/P3_w.webp", "P_b": "assets/P_b.webp", "P_w": "assets/P_w.webp", "R_b": "assets/R_b.webp", "R_w": "assets/R_w.webp", "S_b": "assets/S_b.webp", "S_w": "assets/S_w.webp"};</script>
 <script src="engine.js"></script>
 <script src="app.js"></script>
 <script>

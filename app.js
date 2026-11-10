@@ -6,12 +6,12 @@ const APP = {
   title: '崩盤',
   ruby: 'COLLAPSE',
   tag: '覇王を討て、盤が崩れ落ちる前に',
-  version: 'β 0.9',
+  version: 'β 1.0',
 };
 // 駒の画像を差し替えるとき：キーは「駒_陣営」。例 'K_w': 'assets/K_w.png'
 // 駒: K 覇王 / A 光翼 / F 影翼 / I 槍兵 / D 蒼龍 / S 暴嵐 / R 死鎌 / N 天馬 / P 兵卒 / P1 猛兵 / P2 獣兵 / P3 覇獣
 // 陣営: w 白 / b 黒
-const PIECE_IMAGES = {};
+const PIECE_IMAGES = window.PIECE_IMAGES || {};
 
 (function () {
   'use strict';
@@ -26,7 +26,8 @@ const PIECE_IMAGES = {};
     set(k, v) { try { localStorage.setItem('apoc.' + k, JSON.stringify(v)); } catch (e) { } },
     del(k) { try { localStorage.removeItem('apoc.' + k); } catch (e) { } },
   };
-  const settings = Object.assign({ timer: false, assist: true, sound: true, piece: 'both', targets: true, fx: 'full', flip: false, level: 2, side: 0 }, store.get('settings', {}));
+  const settings = Object.assign({ timer: false, assist: true, sound: true, piece: 'auto', targets: true, fx: 'full', flip: false, level: 2, side: 0 }, store.get('settings', {}));
+  if (!['auto', 'icon', 'kanji'].includes(settings.piece)) settings.piece = 'auto';
   const saveSettings = () => store.set('settings', settings);
 
   // ---------------- 効果音 ----------------
@@ -134,7 +135,7 @@ const PIECE_IMAGES = {};
   function pieceHTML(kind, side, cls = '') {
     const sc = side === WHITE ? 'w' : 'b';
     const img = PIECE_IMAGES[kind + '_' + sc];
-    if (img) return `<span class="pc-wrap"><span class="pc ${sc} ${cls}"><img src="${img}" alt=""></span></span>`;
+    if (img) return `<span class="pc-wrap"><span class="pc img ${sc} ${cls}"><img src="${img}" alt="" draggable="false"><span class="kj">${KIND_CH[kind]}</span></span></span>`;
     const ink = sc === 'w' ? '#132744' : '#e9c47c';
     const cut = sc === 'w' ? '#dfe8f4' : '#1d150c';
     return `<span class="pc-wrap"><span class="pc ${sc} ${cls}"><svg viewBox="0 0 100 100" aria-hidden="true">` +
@@ -145,7 +146,7 @@ const PIECE_IMAGES = {};
       `</svg><span class="kj">${KIND_CH[kind]}</span></span></span>`;
   }
   function applyPieceMode() {
-    document.body.classList.remove('mode-both', 'mode-kanji', 'mode-icon');
+    document.body.classList.remove('mode-auto', 'mode-both', 'mode-kanji', 'mode-icon');
     document.body.classList.add('mode-' + settings.piece);
   }
 
@@ -598,6 +599,7 @@ const PIECE_IMAGES = {};
     const floor = Math.min(r.width, 360);
     const size = Math.floor(Math.min(760, Math.max(floor, Math.min(r.width, r.height))));
     frame.style.width = frame.style.height = size + 'px';
+    boardEl.classList.toggle('tiny', size * 0.916 / N < 46);
     mid.style.minHeight = size + 'px';
   }
 

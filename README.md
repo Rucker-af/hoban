@@ -56,4 +56,4 @@
 
 - ゲーム名：`app.js` 先頭の `APP`、`index.html` の `<title>`、`manifest.webmanifest`
 - 駒の名前：`engine.js` の `TYPES` と `P_FORMS`、`app.js` の `KIND_CH` と `KIND_NAME`
-- 駒の画像：`assets/` に画像を置き、`app.js` 先頭の `PIECE_IMAGES` に `'K_w': 'assets/K_w.png'` のように登録（陣営は `w` 白 / `b` 黒、全24枚）
+- 駒の画像：`assets/` の `K_w.webp` などを差し替える（陣営は `w` 白 / `b` 黒、全24枚）。登録は `index.html` の `window.PIECE_IMAGES`。登録がない駒はコードで描いた紋章になる
