@@ -118,10 +118,10 @@
 </section>
 
 <!-- ===== 対戦設定 ===== -->
-<section class="screen" id="scr-setup" aria-label="CPU対戦の設定">
+<section class="screen" id="scr-setup" aria-label="対戦の設定">
   <div class="content">
-    <div class="bar"><button class="icon-btn back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24"><path d="M15 5 L8 12 L15 19" fill="none" stroke="#d9b56c" stroke-width="2"/></svg></button><h2>CPU対戦</h2></div>
-    <div class="group">
+    <div class="bar"><button class="icon-btn back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24"><path d="M15 5 L8 12 L15 19" fill="none" stroke="#d9b56c" stroke-width="2"/></svg></button><h2 id="setup-title">CPU対戦</h2></div>
+    <div class="group" id="grp-lv">
       <h3>難易度</h3>
       <div class="choices" id="lv-choices">
         <button class="choice" type="button" data-lv="1"><span class="stars">◆◇◇</span><b>初級</b><small>1手先だけを見る。駒の動きを覚えたい人向け。</small></button>
@@ -129,12 +129,19 @@
         <button class="choice" type="button" data-lv="3"><span class="stars">◆◆◆</span><b>上級</b><small>3手先まで読む。救世主と縮退の駆け引きも狙う。</small></button>
       </div>
     </div>
-    <div class="group">
+    <div class="group" id="grp-side">
       <h3>あなたの陣営</h3>
       <div class="choices" id="side-choices">
         <button class="choice" type="button" data-side="0"><b>白・先手</b><small>先に動ける。魂ポイント0から。</small></button>
         <button class="choice" type="button" data-side="1"><b>黒・後手</b><small>後から動く。魂ポイント2から。</small></button>
         <button class="choice" type="button" data-side="r"><b>おまかせ</b><small>ランダムに決める。</small></button>
+      </div>
+    </div>
+    <div class="group">
+      <h3>持ち時間</h3>
+      <div class="choices" id="timer-choices">
+        <button class="choice" type="button" data-t="0"><b>なし</b><small>じっくり考えられる。</small></button>
+        <button class="choice" type="button" data-t="1"><b>10秒切れ</b><small>1手10秒。時間内に指せなければ負け。</small></button>
       </div>
     </div>
     <button class="cta" id="btn-start-cpu" type="button">対局開始</button>
@@ -176,6 +183,7 @@
     <div class="g-top">
       <button class="icon-btn" id="btn-pause" type="button" aria-label="メニュー"><svg viewBox="0 0 24 24"><path d="M5 7 H19 M5 12 H19 M5 17 H19" stroke="#d9b56c" stroke-width="2" stroke-linecap="round"/></svg></button>
       <div class="turn-pill" id="turn-pill"></div>
+      <div class="clock" id="clock" hidden aria-label="残り時間"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9" pathLength="100" class="trk"/><circle cx="18" cy="18" r="15.9" pathLength="100" class="ring" id="clock-ring"/></svg><b id="clock-n">10</b></div>
       <button class="icon-btn" id="btn-log" type="button" aria-label="棋譜"><svg viewBox="0 0 24 24"><path d="M6 4 H15 L19 8 V20 H6 Z M9 11 H16 M9 15 H16" fill="none" stroke="#d9b56c" stroke-width="1.6"/></svg></button>
     </div>
     <div class="tut" id="tut" hidden>
@@ -254,7 +262,7 @@
   </div>
 </div>
 
-<div id="fx-savior" aria-hidden="true"><div class="rays"></div><div class="core"></div><div class="txt"><em>SALVATOR</em><b>救世主降臨</b><span id="sv-sub"></span></div></div>
+<div id="fx-savior" aria-hidden="true"><div class="rays"></div><div class="core"></div><div class="sv-stack"><div class="txt"><em>SALVATOR</em><b>救世主降臨</b><span id="sv-sub"></span></div><div class="sv-cards" id="sv-cards"></div></div><span class="sv-skip">タップでとばす</span></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="engine.js"></script>

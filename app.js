@@ -6,7 +6,7 @@ const APP = {
   title: '終末盤戯',
   ruby: 'APOCALYPTER',
   tag: '魔王を詰ませ、盤が崩れ落ちる前に',
-  version: 'β 0.5',
+  version: 'β 0.7',
 };
 // 駒の画像を差し替えるとき：キーは「駒_陣営」。例 'K_w': 'assets/K_w.png'
 // 駒: K 魔王 / A 天使 / F 堕天使 / I 審問官 / D 龍王 / S 星喰い / R 死神 / N 騎士 / P 信徒 / P1 狂信者 / P2 凶獣 / P3 終末の獣
@@ -26,7 +26,7 @@ const PIECE_IMAGES = {};
     set(k, v) { try { localStorage.setItem('apoc.' + k, JSON.stringify(v)); } catch (e) { } },
     del(k) { try { localStorage.removeItem('apoc.' + k); } catch (e) { } },
   };
-  const settings = Object.assign({ assist: true, sound: true, piece: 'both', targets: true, fx: 'full', flip: false, level: 2, side: 0 }, store.get('settings', {}));
+  const settings = Object.assign({ timer: false, assist: true, sound: true, piece: 'both', targets: true, fx: 'full', flip: false, level: 2, side: 0 }, store.get('settings', {}));
   const saveSettings = () => store.set('settings', settings);
 
   // ---------------- 効果音 ----------------
@@ -63,6 +63,7 @@ const PIECE_IMAGES = {};
     return {
       init,
       tap() { tone(880, .06, 'sine', .08); },
+      tick() { tone(1200, .05, 'square', .06); },
       select() { tone(520, .08, 'triangle', .12); tone(780, .08, 'sine', .06, .02); },
       move() { noise(.07, .35, 1400); tone(170, .12, 'sine', .25); },
       capture() { noise(.12, .45, 900); tone(110, .3, 'sine', .35); tone(1320, .4, 'sine', .07, .02); tone(1980, .3, 'sine', .04, .04); },
@@ -161,9 +162,9 @@ const PIECE_IMAGES = {};
     R: { n: 2, v: 3, d: '斜め4方向に最大2マス。間の駒を飛び越えられる。救世主中は3マス。' },
     N: { n: 2, v: 2, d: 'L字（縦2・横1）に跳ぶ。間の駒を飛び越えられる。救世主中は縦3・横1。' },
     P: { n: 15, v: 1, d: '前に最大2マス進み、斜め前1マスの駒を取る。救世主の降臨で進化する。' },
-    P1: { n: '—', v: 2, d: '自陣の救世主1回目で進化。前に最大2マス。正面1マスと斜め前1マスの駒を取れる。' },
-    P2: { n: '—', v: 2, d: '2回目で進化。前2・後ろ1・左右1マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
-    P3: { n: '—', v: 2, d: '3回目以降。前後2・左右2マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
+    P1: { n: '—', v: 2, d: 'どちらかの救世主が降臨すると進化（合計1回目）。前に最大2マス。正面1マスと斜め前1マスの駒を取れる。' },
+    P2: { n: '—', v: 2, d: '降臨の合計2回目で進化。前2・後ろ1・左右1マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
+    P3: { n: '—', v: 2, d: '降臨の合計3回目以降。前後2・左右2マスに動ける。移動先すべてと斜め前1マスの駒を取れる。' },
   };
 
   function demoState(kind, boosted) {
@@ -272,7 +273,7 @@ const PIECE_IMAGES = {};
       </ul></div>` },
     {
       k: 'RULE VII', h: '信徒の進化', body: `
-      <p>自陣の救世主が降臨した回数に応じて、自陣の信徒すべてが進化します。</p>
+      <p>白と黒のどちらの救世主が降臨しても、<b>両陣営の信徒すべて</b>が進化します。段階は、両陣営の降臨回数の合計で決まります。</p>
       <div class="forms" id="forms"></div>
       <div class="demo"><div class="demo-info" id="form-info"></div><div class="demo-board" id="form-board"></div>
       <div class="legend"><span class="l1">移動できる（駒があれば取れる）</span><span class="l3">取るときだけ行ける</span></div></div>
@@ -286,7 +287,7 @@ const PIECE_IMAGES = {};
     $('pick').innerHTML = ['K', 'A', 'F', 'I', 'D', 'S', 'R', 'N', 'P'].map(k => `<button type="button" data-k="${k}">${pieceHTML(k, WHITE)}<span>${KIND_NAME[k]}</span></button>`).join('');
     $('pick').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; Sfx.tap(); demoKind = b.dataset.k; drawDemo(); });
     $('demo-boost').addEventListener('click', () => { demoBoost = !demoBoost; Sfx.tap(); drawDemo(); });
-    $('forms').innerHTML = ['P', 'P1', 'P2', 'P3'].map((k, i) => `<button type="button" data-k="${k}">${pieceHTML(k, WHITE)}<span>${KIND_NAME[k]}<br><small style="color:var(--muted)">${i === 0 ? '降臨前' : i === 3 ? '3回目〜' : i + '回目'}</small></span></button>`).join('');
+    $('forms').innerHTML = ['P', 'P1', 'P2', 'P3'].map((k, i) => `<button type="button" data-k="${k}">${pieceHTML(k, WHITE)}<span>${KIND_NAME[k]}<br><small style="color:var(--muted)">${i === 0 ? '降臨前' : i === 3 ? '合計3回〜' : '合計' + i + '回'}</small></span></button>`).join('');
     $('forms').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; Sfx.tap(); formKind = b.dataset.k; drawForm(); });
     $('rules-tut').onclick = () => { Sfx.select(); startTutorial(0); };
     drawDemo(); drawForm(); goPage(0);
@@ -343,16 +344,23 @@ const PIECE_IMAGES = {};
   // ================================================================
   //  対戦設定
   // ================================================================
-  function drawSetup() {
+  let setupMode = 'cpu';
+  function drawSetup(mode) {
+    if (mode) setupMode = mode;
+    $('setup-title').textContent = setupMode === 'cpu' ? 'CPU対戦' : '2人対戦';
+    $('grp-lv').hidden = $('grp-side').hidden = setupMode !== 'cpu';
+    $('timer-choices').querySelectorAll('.choice').forEach(b => b.setAttribute('aria-pressed', (b.dataset.t === '1') === settings.timer));
     $('lv-choices').querySelectorAll('.choice').forEach(b => b.setAttribute('aria-pressed', +b.dataset.lv === settings.level));
     $('side-choices').querySelectorAll('.choice').forEach(b => b.setAttribute('aria-pressed', b.dataset.side === String(settings.side)));
   }
   $('lv-choices').onclick = e => { const b = e.target.closest('.choice'); if (!b) return; settings.level = +b.dataset.lv; saveSettings(); drawSetup(); Sfx.select(); };
   $('side-choices').onclick = e => { const b = e.target.closest('.choice'); if (!b) return; settings.side = b.dataset.side === 'r' ? 'r' : +b.dataset.side; saveSettings(); drawSetup(); Sfx.select(); };
+  $('timer-choices').onclick = e => { const b = e.target.closest('.choice'); if (!b) return; settings.timer = b.dataset.t === '1'; saveSettings(); drawSetup(); Sfx.select(); };
   $('btn-start-cpu').onclick = () => {
     Sfx.select();
+    if (setupMode === 'pvp') { startGame({ mode: 'pvp', human: WHITE, level: 2, timer: settings.timer }); return; }
     const human = settings.side === 'r' ? (Math.random() < .5 ? WHITE : BLACK) : settings.side;
-    startGame({ mode: 'cpu', human, level: settings.level });
+    startGame({ mode: 'cpu', human, level: settings.level, timer: settings.timer });
   };
 
   // ================================================================
@@ -362,12 +370,12 @@ const PIECE_IMAGES = {};
     const sv = store.get('save', null);
     const b = $('btn-continue');
     b.hidden = !sv;
-    if (sv) $('continue-desc').textContent = (sv.cfg.mode === 'cpu' ? `CPU${LV[sv.cfg.level]}・あなたは${SIDE[sv.cfg.human]}` : '2人対戦') + `・${sv.G.moveNo}手目`;
+    if (sv) $('continue-desc').textContent = (sv.cfg.mode === 'cpu' ? `CPU${LV[sv.cfg.level]}・あなたは${SIDE[sv.cfg.human]}` : '2人対戦') + `${sv.cfg.timer ? '・10秒切れ' : ''}・${sv.G.moveNo}手目`;
   }
   $('scr-title').addEventListener('click', () => { Sfx.init(); Sfx.select(); show('scr-menu'); });
   $('btn-continue').onclick = () => { Sfx.select(); resumeGame(); };
-  $('btn-cpu').onclick = () => { Sfx.tap(); drawSetup(); show('scr-setup'); };
-  $('btn-pvp').onclick = () => { Sfx.select(); startGame({ mode: 'pvp', human: WHITE, level: 2 }); };
+  $('btn-cpu').onclick = () => { Sfx.tap(); drawSetup('cpu'); show('scr-setup'); };
+  $('btn-pvp').onclick = () => { Sfx.tap(); drawSetup('pvp'); show('scr-setup'); };
   $('btn-rules').onclick = () => { Sfx.tap(); rulesReturn = 'scr-menu'; goPage(0); show('scr-rules'); };
   $('btn-settings').onclick = () => { Sfx.tap(); drawSettings(); show('scr-settings'); };
 
@@ -404,7 +412,7 @@ const PIECE_IMAGES = {};
     $('fx-layer').innerHTML = '';
     show('scr-game');
     render(); save();
-    toast(cfg.mode === 'cpu' ? `あなたは${SIDE[cfg.human]}（${cfg.human === WHITE ? '先手' : '後手'}）` : '2人対戦・白から', `${cfg.mode === 'cpu' ? 'CPU ' + LV[cfg.level] : '交互に操作してください'}`);
+    toast(cfg.mode === 'cpu' ? `あなたは${SIDE[cfg.human]}（${cfg.human === WHITE ? '先手' : '後手'}）` : '2人対戦・白から', `${cfg.mode === 'cpu' ? 'CPU ' + LV[cfg.level] : '交互に操作してください'}${cfg.timer ? '・1手10秒' : ''}`);
     maybeCpu(900);
   }
   function resumeGame() {
@@ -482,7 +490,7 @@ const PIECE_IMAGES = {};
     if (!G) return;
     const k = G.shrink;
     const doom = G.active[0] > 0 || G.active[1] > 0;
-    const pre = (G.pLost[0] === 1 && G.summons[0] >= 1) || (G.pLost[1] === 1 && G.summons[1] >= 1);
+    const pre = (totalSummons(G) >= 1 && (G.pLost[0] === 1 || G.pLost[1] === 1));
     computeAssist();
     boardEl.classList.toggle('bside', G.turn === BLACK);
     for (let d = 0; d < N * N; d++) {
@@ -514,8 +522,56 @@ const PIECE_IMAGES = {};
       el.setAttribute('aria-label', label);
       el.disabled = !alive;
     }
-    renderPlayers(); renderTurn(); renderHint(); renderRibbons();
+    renderPlayers(); renderTurn(); renderHint(); renderRibbons(); timerSync();
     fitBoard();
+  }
+
+  // ---------------- 10秒切れ ----------------
+  const TURN_MS = 10000;
+  let tLeft = TURN_MS, tKey = null, tLast = 0, tSecShown = -1;
+  function timerOn() { return !!(cfg && cfg.timer && G && G.winner === null && cfg.mode !== 'tut' && (cfg.mode === 'pvp' || G.turn === cfg.human)); }
+  function timerSync() {
+    const el = $('clock');
+    if (!cfg || !cfg.timer || cfg.mode === 'tut') { el.hidden = true; return; }
+    el.hidden = false;
+    const key = G.moveNo + ':' + G.turn;
+    if (key !== tKey) { tKey = key; tLeft = TURN_MS; tSecShown = -1; }
+    drawClock();
+  }
+  function timerPaused() {
+    return busy || current !== 'scr-game' || document.hidden || $('ov-pause').classList.contains('on') || $('fx-savior').classList.contains('on');
+  }
+  function drawClock() {
+    const el = $('clock');
+    const on = timerOn();
+    el.classList.toggle('idle', !on);
+    el.classList.toggle('b', G.turn === BLACK);
+    const sec = Math.max(0, tLeft / 1000);
+    el.classList.toggle('low', on && sec <= 3);
+    $('clock-n').textContent = on ? Math.ceil(sec) : '–';
+    $('clock-ring').style.strokeDashoffset = on ? (100 - sec * 10).toFixed(1) : 0;
+  }
+  function timerTick(t) {
+    requestAnimationFrame(timerTick);
+    const dt = tLast ? Math.min(250, t - tLast) : 0; tLast = t;
+    if (!timerOn()) return;
+    if (timerPaused()) return;
+    tLeft -= dt;
+    const s = Math.ceil(tLeft / 1000);
+    if (s !== tSecShown) { tSecShown = s; if (s <= 3 && s > 0) Sfx.tick(); }
+    drawClock();
+    if (tLeft <= 0) timeUp();
+  }
+  requestAnimationFrame(timerTick);
+  function timeUp() {
+    clearTimeout(cpuTimer); busy = false;
+    const loser = G.turn;
+    G = Object.assign({}, G, { winner: 1 - loser, events: [] });
+    endReason = 'timeout';
+    logItems.push({ c: 'sh', t: `${SIDE[loser]}が時間切れ` });
+    selected = null; targets = [];
+    Sfx.lose(); toast('時間切れ', `${SIDE[loser]}の負け`, 'sh');
+    render(); setTimeout(showResult, 900);
   }
 
   // 救世主の残り手番を盤の上に大きく出す
@@ -558,7 +614,7 @@ const PIECE_IMAGES = {};
     tags.push(`<span class="tag form">信徒：${P_FORMS[pForm(G, s)].name}</span>`);
     
     if (G.summons[s] > 0) tags.push(`<span class="tag">降臨 ${G.summons[s]}回</span>`);
-    if (G.summons[s] >= 1) tags.push(`<span class="tag ${G.pLost[s] === 1 ? 'warn' : ''}">信徒の損失 ${G.pLost[s]}/2</span>`);
+    if (totalSummons(G) >= 1) tags.push(`<span class="tag ${G.pLost[s] === 1 ? 'warn' : ''}">信徒の損失 ${G.pLost[s]}/2</span>`);
     tags.push(`<span class="tag">駒 ${cnt}</span>`);
     el.className = `player ${sc}${G.turn === s && G.winner === null ? ' active' : ''}`;
     el.innerHTML = `<span class="medal">${pieceHTML('K', s)}</span>
@@ -617,7 +673,7 @@ const PIECE_IMAGES = {};
       const r = (ki / N) | 0, c = ki % N, k = G.shrink;
       assist.kingOnRing = Math.min(r - k, N - 1 - k - r, c - k, N - 1 - k - c) === 0;
     }
-    assist.shrinkSoon = G.active[0] > 0 || G.active[1] > 0 || (G.pLost[0] === 1 && G.summons[0] >= 1) || (G.pLost[1] === 1 && G.summons[1] >= 1) || Math.max(G.pts[0], G.pts[1]) >= 14;
+    assist.shrinkSoon = G.active[0] > 0 || G.active[1] > 0 || (totalSummons(G) >= 1 && (G.pLost[0] === 1 || G.pLost[1] === 1)) || Math.max(G.pts[0], G.pts[1]) >= 14;
     if (selected !== null && G.turn === me) {
       for (const t of targets) {
         const ns = applyMove(G, selected, t);
@@ -701,15 +757,34 @@ const PIECE_IMAGES = {};
     frame.classList.remove('shake'); void frame.offsetWidth; frame.classList.add('shake');
   }
 
-  function saviorFx(side, ev) {
+  let svSkip = null, svHide = null;
+  function saviorFx(side, ev, prev, s) {
     const el = $('fx-savior');
+    const sc = side === WHITE ? 'w' : 'b';
     el.style.setProperty('--rc', side === WHITE ? '#79d4ff' : '#ff6b5c');
-    $('sv-sub').textContent = `${SIDE[side]}陣営 ${ev.count}回目 ・ 信徒は${ev.form}へ`;
-    if (settings.fx === 'calm' || reduceMotion) { toast(`${SIDE[side]}の救世主降臨`, `信徒は${ev.form}へ進化`); return 0; }
+    $('sv-sub').textContent = `${SIDE[side]}陣営${ev.count > 1 ? `・${ev.count}回目` : ''}`;
+    if (reduceMotion) { toast(`${SIDE[side]}の救世主降臨`, `3手の間、移動距離1.5倍`); return; }
+    // 何が変わったかのカード
+    const cards = [];
+    const boosted = ['F', 'I', 'D', 'S', 'R', 'N'].map(k => `<span class="svc-pc">${pieceHTML(k, side, 'boost')}</span>`).join('');
+    cards.push(`<div class="svc ${sc}"><em>${SIDE[side]}の陣営</em><b>3ターン　移動距離 1.5倍</b><div class="svc-pcs">${boosted}</div></div>`);
+    const evo = [WHITE, BLACK].filter(x => pForm(prev, x) !== pForm(s, x));
+    const groups = evo.length === 2 && pForm(prev, 0) === pForm(prev, 1) && pForm(s, 0) === pForm(s, 1) ? [[evo, '両陣営']] : evo.map(x => [[x], `${SIDE[x]}陣営`]);
+    for (const [xs, label] of groups) {
+      const x = xs[0], f0 = pForm(prev, x), f1 = pForm(s, x);
+      const k0 = f0 ? 'P' + f0 : 'P', k1 = 'P' + f1;
+      const medal = (k, t) => xs.map(y => `<span class="svc-pc">${pieceHTML(k, y, t)}</span>`).join('');
+      cards.push(`<div class="svc ${xs.length === 2 ? 'both' : x === WHITE ? 'w' : 'b'}"><em>${label}の信徒 進化</em>` +
+        `<div class="evo"><span class="evo-side">${medal(k0, '')}<small>${KIND_NAME[k0]}</small></span><span class="arrow">→</span><span class="evo-side">${medal(k1, 'boost')}<small>${KIND_NAME[k1]}</small></span></div>` +
+        `<small class="svc-note">${MOVE_SHORT[k1]}${f0 === 0 ? '・取られたときの魂は2' : ''}</small></div>`);
+    }
+    cards.push(`<div class="svc mini ${sc}"><em>${SIDE[side]}の魂ポイント</em><b>0 から貯め直し</b></div>`);
+    $('sv-cards').innerHTML = cards.map((c, i) => c.replace('class="svc', `style="--d:${(0.85 + i * 0.55).toFixed(2)}s" class="svc`)).join('');
     el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
-    setTimeout(() => el.classList.remove('on'), 2300);
-    return 1900;
+    clearTimeout(svHide); svHide = setTimeout(() => el.classList.remove('on'), SV_MS);
   }
+  const SV_MS = 4600;
+  $('fx-savior').addEventListener('click', () => { if (svSkip) svSkip(); });
 
   let toastTimer;
   function toast(main, sub, cls = '') {
@@ -743,17 +818,19 @@ const PIECE_IMAGES = {};
     }
     if (sv) {
       const at = wait ? wait + 100 : 150;
-      setTimeout(() => { Sfx.savior(); saviorFx(sv.side, sv); }, at);
-      wait = at + (settings.fx === 'calm' || reduceMotion ? 500 : 2000);
+      setTimeout(() => { Sfx.savior(); saviorFx(sv.side, sv, prev, s); }, at);
+      wait = at + (reduceMotion ? 500 : SV_MS - 300);
     }
-    if (cfg.mode === 'tut') { busy = true; renderHint(); setTimeout(() => { busy = false; tutAfter(prev); }, wait + (s.winner !== null ? 700 : 450)); return; }
-    if (s.winner !== null) {
-      busy = true;
-      setTimeout(() => { busy = false; showResult(); }, wait + 900);
-      return;
-    }
-    if (wait) { busy = true; renderHint(); setTimeout(() => { busy = false; render(); maybeCpu(250); }, wait); }
-    else maybeCpu();
+    let cont, extra = 0;
+    if (cfg.mode === 'tut') { cont = () => tutAfter(prev); extra = s.winner !== null ? 700 : 450; }
+    else if (s.winner !== null) { cont = () => showResult(); extra = 900; }
+    else if (wait) cont = () => { render(); maybeCpu(250); };
+    else { maybeCpu(); return; }
+    busy = true; renderHint();
+    let done = false;
+    const run = () => { if (done) return; done = true; svSkip = null; busy = false; cont(); };
+    const tid = setTimeout(run, wait + extra);
+    if (sv) svSkip = () => { clearTimeout(tid); clearTimeout(svHide); $('fx-savior').classList.remove('on'); run(); };
   }
 
   // ---------------- 棋譜 ----------------
@@ -784,7 +861,7 @@ const PIECE_IMAGES = {};
     store.del('save');
     const w = G.winner;
     const ev = G.events.find(e => ['kingCaptured', 'kingFall', 'noMoves'].includes(e.type));
-    const why = endReason === 'resign' ? '投了' : !ev ? '' : ev.type === 'kingFall' ? '縮退で魔王が盤外へ落下' : ev.type === 'noMoves' ? '動かせる駒がなくなった' : '魔王を詰ませた';
+    const why = endReason === 'resign' ? '投了' : endReason === 'timeout' ? '時間切れ' : !ev ? '' : ev.type === 'kingFall' ? '縮退で魔王が盤外へ落下' : ev.type === 'noMoves' ? '動かせる駒がなくなった' : '魔王を詰ませた';
     endReason = null;
     let big, lose = false;
     if (w === 'draw') big = '引き分け';
@@ -874,7 +951,7 @@ const PIECE_IMAGES = {};
       goal: s => s.winner === null,
       fail: '魔王が外周に残ったまま縮退が起き、落ちてしまいました。魔王を上へ動かそう。' },
     { h: '救世主を呼ぶ', p: '魂ポイントが<b>20</b>になると救世主が降臨します。いま19点。<b>騎士</b>で黒の信徒を取って、あと1点を稼ごう。',
-      ok: '降臨中の3手は、強い駒の移動距離が1.5倍。信徒も進化します。ただし救世主が消えると縮退が起きるので注意。',
+      ok: '降臨中の3手は、強い駒の移動距離が1.5倍。両陣営の信徒も進化します。ただし救世主が消えると縮退が起きるので注意。',
       setup: () => mk([...KINGS, [12, 6, 'N', WHITE], [10, 7, 'P', BLACK], [14, 10, 'I', WHITE], [10, 12, 'P', BLACK]], { pts: [19, 2] }),
       goal: s => !!s.events.find(e => e.type === 'savior'),
       fail: '騎士のL字の先にいる信徒を取ろう。' },
@@ -932,13 +1009,14 @@ const PIECE_IMAGES = {};
     const rows = ['K', 'A', 'F', 'I', 'D', 'S', 'R', 'N', 'P'].map(k =>
       `<li><span class="rm">${pieceHTML(k, WHITE)}</span><span><b>${KIND_NAME[k]}</b><small>${MOVE_SHORT[k]}</small></span><span class="rv">${PIECE_INFO[k].v}</span></li>`).join('');
     const forms = ['P1', 'P2', 'P3'].map((k, i) =>
-      `<li><span class="rm">${pieceHTML(k, WHITE)}</span><span><b>${KIND_NAME[k]}</b><small>降臨${i + 1}回目${i === 2 ? '以降' : ''}・${MOVE_SHORT[k]}</small></span><span class="rv">2</span></li>`).join('');
+      `<li><span class="rm">${pieceHTML(k, WHITE)}</span><span><b>${KIND_NAME[k]}</b><small>降臨 合計${i + 1}回${i === 2 ? '以上' : ''}・${MOVE_SHORT[k]}</small></span><span class="rv">2</span></li>`).join('');
+    // (降臨回数は両陣営の合計)
     $('ref-body').innerHTML = `
       <section><h4>勝ち方</h4><p>相手の魔王を取る。縮退で相手の魔王が盤外に落ちても勝ち。</p></section>
       <section><h4>駒の動き<span>魂</span></h4><ul class="ref-list">${rows}</ul></section>
       <section><h4>救世主</h4><p>魂ポイント20で自動降臨し、ポイントは0に。降臨した側の手番3回、堕天使・審問官・龍王・星喰い・死神・騎士の移動距離が1.5倍。</p></section>
       <section><h4>縮退</h4><p>救世主が消えたとき、または進化後の信徒がどちらかの陣営で2体取られるたびに、外周1周が消える。上の駒は消滅し、魔王なら負け。</p></section>
-      <section><h4>信徒の進化<span>魂</span></h4><ul class="ref-list">${forms}</ul></section>
+      <section><h4>信徒の進化（どちらの降臨でも両陣営）<span>魂</span></h4><ul class="ref-list">${forms}</ul></section>
       <section><h4>先手と後手</h4><p>白が先手。黒は魂ポイント2から始まる。</p></section>`;
   }
   $('btn-ref').onclick = () => { Sfx.tap(); $('ov-ref').classList.add('on'); };

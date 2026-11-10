@@ -24,11 +24,13 @@ const BLACK_START_POINTS = 2;
 
 const idx = (r, c) => r * N + c;
 
-function pForm(state, side) { return Math.min(state.summons[side], 3); }
+// 信徒の進化は、両陣営の救世主の降臨回数の合計で決まる（どちらが降臨しても両陣営が進化）
+function totalSummons(state) { return state.summons[0] + state.summons[1]; }
+function pForm(state, side) { return Math.min(totalSummons(state), 3); }
 function pieceName(state, p) { return p.t === 'P' ? P_FORMS[pForm(state, p.s)].name : TYPES[p.t].name; }
 function pieceChar(state, p) { return p.t === 'P' ? P_FORMS[pForm(state, p.s)].ch : TYPES[p.t].ch; }
 function pieceValue(state, p) {
-  if (p.t === 'P') return state.summons[p.s] >= 1 ? 2 : 1;
+  if (p.t === 'P') return totalSummons(state) >= 1 ? 2 : 1;
   return TYPES[p.t].val;
 }
 
@@ -216,7 +218,7 @@ function applyMove(state, from, to) {
     const v = pieceValue(s, captured);
     s.pts[me] += v;
     s.events.push({ type: 'points', side: me, gain: v, total: s.pts[me] });
-    if (captured.t === 'P' && s.summons[captured.s] >= 1) s.pLost[captured.s]++;
+    if (captured.t === 'P' && totalSummons(s) >= 1) s.pLost[captured.s]++;
   }
 
   // 救世主の残り手番を消費
@@ -358,4 +360,4 @@ function cpuMove(s, level = 2, budgetMs = 2500) {
   } finally { _deadline = Infinity; }
 }
 
-if (typeof module !== 'undefined') module.exports = { N, WHITE, BLACK, TYPES, P_FORMS, initialState, pieceMoves, allMoves, applyMove, cpuMove, pieceName, pieceChar, pieceValue, inBoard, pForm, idx, evaluate };
+if (typeof module !== 'undefined') module.exports = { N, WHITE, BLACK, TYPES, P_FORMS, initialState, pieceMoves, allMoves, applyMove, cpuMove, pieceName, pieceChar, pieceValue, inBoard, pForm, totalSummons, idx, evaluate };
