@@ -6,7 +6,7 @@ const APP = {
   title: '崩盤',
   ruby: 'COLLAPSE',
   tag: '覇王を討て、盤が崩れ落ちる前に',
-  version: 'β 1.0',
+  version: 'β 1.0.1',
 };
 // 駒の画像を差し替えるとき：キーは「駒_陣営」。例 'K_w': 'assets/K_w.png'
 // 駒: K 覇王 / A 光翼 / F 影翼 / I 槍兵 / D 蒼龍 / S 暴嵐 / R 死鎌 / N 天馬 / P 兵卒 / P1 猛兵 / P2 獣兵 / P3 覇獣

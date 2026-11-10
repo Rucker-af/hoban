@@ -1,11 +1,11 @@
 // オフラインでも遊べるようにするキャッシュ。ファイルを更新したら VERSION を上げる。
-const VERSION = 'hoban-v1.0';
+const VERSION = 'hoban-v1.0.1';
 const FILES = [
   './',
   'index.html',
-  'style.css',
-  'engine.js',
-  'app.js',
+  'style.css?v=1.0.1',
+  'engine.js?v=1.0.1',
+  'app.js?v=1.0.1',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
@@ -43,6 +43,11 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put(e.request, copy)); return res; })
+      .catch(() => caches.match(e.request).then(hit => hit || caches.match('index.html'))));
+    return;
+  }
   e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
     if (res.ok && (e.request.url.startsWith(self.location.origin) || e.request.url.includes('fonts.g'))) {
       const copy = res.clone(); caches.open(VERSION).then(c => c.put(e.request, copy));
