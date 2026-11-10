@@ -355,14 +355,14 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold);
 
 /* 降臨演出 */
 #fx-savior { position: fixed; inset: 0; z-index: 30; pointer-events: none; cursor: pointer; display: grid; place-items: center; opacity: 0; visibility: hidden; }
-#fx-savior.on { visibility: visible; pointer-events: auto; animation: svIn 4.6s var(--ease) forwards; background: rgba(3,5,10,.8); }
+#fx-savior.on { visibility: visible; pointer-events: auto; animation: svIn 9s var(--ease) forwards; background: rgba(3,5,10,.8); }
 #fx-savior .rays { position: absolute; width: 200vmax; height: 200vmax; background: repeating-conic-gradient(from 0deg, var(--rc) 0deg 4deg, transparent 4deg 14deg); mask-image: radial-gradient(circle, #000 0%, transparent 45%); -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 45%); animation: spin 12s linear infinite; opacity: .6; }
 #fx-savior .core { position: absolute; width: 60vmin; height: 60vmin; border-radius: 50%; background: radial-gradient(circle, var(--rc) 0%, transparent 65%); opacity: .8; }
 #fx-savior .txt { position: relative; text-align: center; }
 #fx-savior .txt b { display: block; font-family: var(--f-display); font-weight: 800; font-size: clamp(40px, 12vw, 96px); letter-spacing: .18em; padding-left: .18em; color: #fff; text-shadow: 0 0 20px var(--rc), 0 0 50px var(--rc); }
 #fx-savior .txt span { display: block; font-family: var(--f-display); letter-spacing: .25em; color: #fff; text-shadow: 0 0 10px var(--rc); font-size: clamp(13px, 3.4vw, 18px); margin-top: 6px; }
 #fx-savior .txt em { display: block; font-style: normal; font-family: var(--f-latin); letter-spacing: .5em; font-size: 12px; color: #fff; opacity: .8; margin-bottom: 8px; }
-@keyframes svIn { 0% { opacity: 0; transform: scale(1.12); } 7% { opacity: 1; transform: none; } 90% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes svIn { 0% { opacity: 0; transform: scale(1.12); } 4% { opacity: 1; transform: none; } 96% { opacity: 1; } 100% { opacity: 0; } }
 
 #toast { position: fixed; left: 50%; top: calc(64px + env(safe-area-inset-top, 0px)); transform: translate(-50%, -10px); z-index: 25; pointer-events: none;
   font-family: var(--f-display); font-weight: 800; letter-spacing: .14em; font-size: 17px; padding: 10px 22px; border-radius: 4px; text-align: center;
@@ -490,3 +490,7 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--gold);
 .clock.low { --ck: var(--blood); animation: clockLow .5s ease-in-out infinite alternate; }
 .clock.low b { color: #ff8b94; }
 @keyframes clockLow { to { transform: scale(1.12); } }
+
+.sv-skip::after { content: ""; display: block; width: 120px; height: 2px; margin: 8px auto 0; background: rgba(255,255,255,.18); background-image: linear-gradient(var(--rc), var(--rc)); background-repeat: no-repeat; background-size: 100% 100%; }
+#fx-savior.on .sv-skip::after { animation: svBar 9s linear forwards; }
+@keyframes svBar { to { background-size: 0% 100%; } }
